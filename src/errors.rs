@@ -24,7 +24,7 @@ impl From<reqwest::Error> for Error {
 }
 
 impl From<serde_json::Error> for Error {
-    fn from(_e: serde_json::Error) -> Self {
-        Error::HTTPInternalError(String::from("Invalid response"))
+    fn from(e: serde_json::Error) -> Self {
+        Error::HTTPInternalError(String::from(format!("Invalid response: {}", e.to_string())))
     }
 }
