@@ -1,12 +1,18 @@
+use serde::de::DeserializeOwned;
 use std::collections::HashMap;
 
 pub trait Task {
+    type TaskResult: DeserializeOwned;
+
+    fn get_task_id(&self) -> Option<i64>;
+    fn set_task_id(&mut self, task_id: i64);
     fn task_type(&self) -> String;
     fn description(&self) -> String;
     fn into_map(&self) -> HashMap<&str, String>;
 }
 
 pub struct RecaptchaV2Task {
+    pub id: Option<i64>,
     pub website_url: String,
     pub website_key: String,
     pub is_invisible: bool,
@@ -16,6 +22,7 @@ pub struct RecaptchaV2Task {
 impl RecaptchaV2Task {
     pub fn new(url: &str, site_key: &str) -> Self {
         RecaptchaV2Task {
+            id: None,
             website_url: String::from(url),
             website_key: String::from(site_key),
             is_invisible: true,
@@ -33,6 +40,16 @@ impl RecaptchaV2Task {
 }
 
 impl Task for RecaptchaV2Task {
+    type TaskResult = crate::models::RecaptchaV2Response;
+
+    fn get_task_id(&self) -> Option<i64> {
+        self.id
+    }
+
+    fn set_task_id(&mut self, task_id: i64) {
+        self.id = Some(task_id)
+    }
+
     fn task_type(&self) -> String {
         String::from("RecaptchaV2Task")
     }
