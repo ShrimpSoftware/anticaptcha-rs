@@ -76,20 +76,9 @@ pub async fn request<T: DeserializeOwned>(
         .await?;
 
     if response.contains("errorCode") {
-        let result: ErrorResponse = match serde_json::from_str(&response) {
-            Ok(v) => v,
-            Err(_) => {
-                println!("{}", response);
-                return Err(Error::HTTPInternalError(String::from(
-                    "Unable to deserialize",
-                )));
-            }
-        };
-        //let result: ErrorResponse = serde_json::from_str(&response)?;
+        let result: ErrorResponse = serde_json::from_str(&response)?;
         return Err(Error::ApiError(result));
     }
-
-    println!("{}", response);
 
     let result: T = serde_json::from_str(&response)?;
     Ok(result)
