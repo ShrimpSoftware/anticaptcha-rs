@@ -1,15 +1,5 @@
-use serde::de::DeserializeOwned;
+use crate::tasks::Task;
 use std::collections::HashMap;
-
-pub trait Task {
-    type TaskResult: DeserializeOwned;
-
-    fn get_task_id(&self) -> Option<i64>;
-    fn set_task_id(&mut self, task_id: i64);
-    fn task_type(&self) -> String;
-    fn description(&self) -> String;
-    fn into_map(&self) -> HashMap<&str, String>;
-}
 
 pub struct RecaptchaV2Task {
     pub id: Option<i64>,
