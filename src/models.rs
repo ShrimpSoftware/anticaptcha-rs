@@ -22,6 +22,18 @@ pub struct RecaptchaV2Response {
     pub grecaptcha: String,
 }
 
+#[derive(Debug, Deserialize)]
+pub struct FunCaptchaResponse {
+    pub token: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct GeeTestResponse {
+    pub challenge: String,
+    pub validate: String,
+    pub seccode: String,
+}
+
 #[derive(Debug, Serialize)]
 pub struct APIRequest<'a> {
     #[serde(rename = "clientKey")]
