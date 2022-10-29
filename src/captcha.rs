@@ -1,8 +1,10 @@
 use crate::errors::Error;
-use crate::models::{APIRequest, BalanceResponse, ErrorResponse, TaskResponse, TaskStatus};
+use crate::models::APIRequest;
+use crate::response::{BalanceResponse, ErrorResponse, TaskResponse, TaskStatus};
 use crate::tasks::Task;
 
 use serde::de::DeserializeOwned;
+use serde::Serialize;
 
 pub struct Anticaptcha {
     pub client: reqwest::Client,
@@ -33,7 +35,7 @@ impl Anticaptcha {
     pub async fn create_task<T: Task>(&self, task: &mut T) -> Result<(), Error> {
         let data = APIRequest {
             key: self.key.clone(),
-            task: Some(task.into_map()),
+            task: Some(task.as_value()?),
             task_id: None,
         };
 
@@ -62,14 +64,14 @@ impl Anticaptcha {
     }
 }
 
-pub async fn request<T: DeserializeOwned>(
+pub async fn request<T: Serialize, R: DeserializeOwned>(
     client: &reqwest::Client,
     path: String,
-    data: &APIRequest<'_>,
-) -> Result<T, Error> {
+    data: T,
+) -> Result<R, Error> {
     let response = client
         .post(format!("https://api.anti-captcha.com{}", path))
-        .json(data)
+        .json(&data)
         .send()
         .await?
         .text()
@@ -80,6 +82,6 @@ pub async fn request<T: DeserializeOwned>(
         return Err(Error::ApiError(result));
     }
 
-    let result: T = serde_json::from_str(&response)?;
+    let result: R = serde_json::from_str(&response)?;
     Ok(result)
 }

@@ -1,4 +1,4 @@
-use crate::models::ErrorResponse;
+use crate::response::ErrorResponse;
 
 #[derive(Debug)]
 pub enum Error {
