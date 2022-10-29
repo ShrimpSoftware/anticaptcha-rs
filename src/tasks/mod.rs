@@ -4,6 +4,15 @@ use std::collections::HashMap;
 pub mod recaptcha_v2;
 pub use recaptcha_v2::RecaptchaV2Task;
 
+pub mod hcaptcha;
+pub use hcaptcha::HCaptchaTask;
+
+pub mod funcaptcha;
+pub use funcaptcha::FunCaptchaTask;
+
+pub mod geetest;
+pub use geetest::GeeTestTask;
+
 pub trait Task {
     type TaskResult: DeserializeOwned;
 
