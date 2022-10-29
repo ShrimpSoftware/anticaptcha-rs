@@ -1,26 +1,44 @@
-use crate::tasks::Task;
-use std::collections::HashMap;
+use crate::errors::Error;
+use crate::proxies::{Proxiable, Proxy};
+use crate::response::GeeTestResponse;
+use crate::tasks::{merge, Task};
 
+use serde::Serialize;
+use serde_json::Value;
+
+#[derive(Debug, Serialize, Default)]
 pub struct GeeTestTask {
+    #[serde(skip_serializing)]
     pub id: Option<i64>,
+    #[serde(rename = "type")]
+    pub task_type: String,
+    #[serde(rename = "websiteURL")]
     pub website_url: String,
+    #[serde(rename = "gt")]
     pub website_gt: String,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "challenge")]
     pub challenge: Option<String>,
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        rename = "geetestApiServerSubdomain"
+    )]
     pub subdomain: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", rename = "geetestGetLib")]
     pub getlib: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub version: Option<i8>,
+    #[serde(skip_serializing)]
+    pub proxy: Option<Proxy>,
 }
 
 impl GeeTestTask {
     pub fn new(url: String, public_gt_key: String) -> Self {
         GeeTestTask {
             id: None,
+            task_type: String::from("GeeTestTaskProxyless"),
             website_url: url,
             website_gt: public_gt_key,
-            challenge: None,
-            subdomain: None,
-            getlib: None,
-            version: None,
+            ..Default::default()
         }
     }
 
@@ -42,7 +60,7 @@ impl GeeTestTask {
 }
 
 impl Task for GeeTestTask {
-    type TaskResult = crate::models::GeeTestResponse;
+    type TaskResult = GeeTestResponse;
 
     fn get_task_id(&self) -> Option<i64> {
         self.id
@@ -52,37 +70,24 @@ impl Task for GeeTestTask {
         self.id = Some(task_id)
     }
 
-    fn task_type(&self) -> String {
-        String::from("GeeTestTaskProxyless")
-    }
-
     fn description(&self) -> String {
         String::from("Solve GeeTest automatically")
     }
 
-    fn into_map(&self) -> HashMap<&str, String> {
-        let mut map = HashMap::from([
-            ("type", self.task_type()),
-            ("websiteURL", self.website_url.clone()),
-            ("gt", self.website_gt.clone()),
-        ]);
-
-        if let Some(challenge) = &self.challenge {
-            map.insert("challenge", challenge.clone());
+    fn as_value(&self) -> Result<Value, Error> {
+        if let Some(proxy) = &self.proxy {
+            let proxy_value = serde_json::to_value(proxy)?;
+            let mut task_value = serde_json::to_value(self)?;
+            merge(&mut task_value, proxy_value);
+            return Ok(task_value);
         }
+        Ok(serde_json::to_value(self)?)
+    }
+}
 
-        if let Some(subdomain) = &self.subdomain {
-            map.insert("geetestApiServerSubdomain", subdomain.clone());
-        }
-
-        if let Some(getlib) = &self.getlib {
-            map.insert("geetestGetLib", getlib.clone());
-        }
-
-        if let Some(version) = &self.version {
-            map.insert("version", version.to_string());
-        }
-
-        map
+impl Proxiable for GeeTestTask {
+    fn set_proxy(&mut self, proxy: Proxy) {
+        self.proxy = Some(proxy);
+        self.task_type = String::from("GeeTestTask");
     }
 }
