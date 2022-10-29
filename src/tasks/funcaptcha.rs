@@ -1,22 +1,40 @@
-use crate::tasks::Task;
-use std::collections::HashMap;
+use crate::errors::Error;
+use crate::proxies::{Proxiable, Proxy};
+use crate::response::FunCaptchaResponse;
+use crate::tasks::{merge, Task};
 
+use serde::Serialize;
+use serde_json::Value;
+
+#[derive(Debug, Serialize, Default)]
 pub struct FunCaptchaTask {
+    #[serde(skip_serializing)]
     pub id: Option<i64>,
+    #[serde(rename = "type")]
+    pub task_type: String,
+    #[serde(rename = "websiteURL")]
     pub website_url: String,
+    #[serde(rename = "websitePublicKey")]
     pub website_key: String,
+    #[serde(
+        skip_serializing_if = "Option::is_none",
+        rename = "funcaptchaApiJSSubdomain"
+    )]
     pub subdomain: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub data: Option<String>,
+    #[serde(skip_serializing)]
+    pub proxy: Option<Proxy>,
 }
 
 impl FunCaptchaTask {
     pub fn new(url: String, public_key: String) -> Self {
         FunCaptchaTask {
             id: None,
+            task_type: String::from("FunCaptchaTaskProxyless"),
             website_url: url,
             website_key: public_key,
-            subdomain: None,
-            data: None,
+            ..Default::default()
         }
     }
 
@@ -30,7 +48,7 @@ impl FunCaptchaTask {
 }
 
 impl Task for FunCaptchaTask {
-    type TaskResult = crate::models::FunCaptchaResponse;
+    type TaskResult = FunCaptchaResponse;
 
     fn get_task_id(&self) -> Option<i64> {
         self.id
@@ -40,29 +58,24 @@ impl Task for FunCaptchaTask {
         self.id = Some(task_id)
     }
 
-    fn task_type(&self) -> String {
-        String::from("FunCaptchaTaskProxyless")
-    }
-
     fn description(&self) -> String {
         String::from("Solve Funcaptcha automatically")
     }
 
-    fn into_map(&self) -> HashMap<&str, String> {
-        let mut map = HashMap::from([
-            ("type", self.task_type()),
-            ("websiteURL", self.website_url.clone()),
-            ("websitePublicKey", self.website_key.clone()),
-        ]);
-
-        if let Some(subdomain) = &self.subdomain {
-            map.insert("funcaptchaApiJSSubdomain", subdomain.clone());
+    fn as_value(&self) -> Result<Value, Error> {
+        if let Some(proxy) = &self.proxy {
+            let proxy_value = serde_json::to_value(proxy)?;
+            let mut task_value = serde_json::to_value(self)?;
+            merge(&mut task_value, proxy_value);
+            return Ok(task_value);
         }
+        Ok(serde_json::to_value(self)?)
+    }
+}
 
-        if let Some(data) = &self.data {
-            map.insert("data", data.clone());
-        }
-
-        map
+impl Proxiable for FunCaptchaTask {
+    fn set_proxy(&mut self, proxy: Proxy) {
+        self.proxy = Some(proxy);
+        self.task_type = String::from("FunCaptchaTask");
     }
 }
