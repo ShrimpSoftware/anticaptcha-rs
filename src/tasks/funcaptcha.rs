@@ -28,22 +28,24 @@ pub struct FunCaptchaTask {
 }
 
 impl FunCaptchaTask {
-    pub fn new(url: String, public_key: String) -> Self {
+    pub fn new(url: impl Into<String>, public_key: impl Into<String>) -> Self {
         FunCaptchaTask {
             id: None,
             task_type: String::from("FunCaptchaTaskProxyless"),
-            website_url: url,
-            website_key: public_key,
+            website_url: url.into(),
+            website_key: public_key.into(),
             ..Default::default()
         }
     }
 
-    pub fn set_subdomain(&mut self, subdomain: String) {
-        self.subdomain = Some(subdomain)
+    pub fn set_subdomain(mut self, subdomain: impl Into<String>) -> Self {
+        self.subdomain = Some(subdomain.into());
+        self
     }
 
-    pub fn set_data(&mut self, data: String) {
-        self.data = Some(data);
+    pub fn set_data(mut self, data: impl Into<String>) -> Self {
+        self.data = Some(data.into());
+        self
     }
 }
 
