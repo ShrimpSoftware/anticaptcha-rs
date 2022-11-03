@@ -32,30 +32,34 @@ pub struct GeeTestTask {
 }
 
 impl GeeTestTask {
-    pub fn new(url: String, public_gt_key: String) -> Self {
+    pub fn new(url: impl Into<String>, public_gt_key: impl Into<String>) -> Self {
         GeeTestTask {
             id: None,
             task_type: String::from("GeeTestTaskProxyless"),
-            website_url: url,
-            website_gt: public_gt_key,
+            website_url: url.into(),
+            website_gt: public_gt_key.into(),
             ..Default::default()
         }
     }
 
-    pub fn set_challenge(&mut self, challenge: String) {
-        self.challenge = Some(challenge)
+    pub fn set_challenge(mut self, challenge: impl Into<String>) -> Self {
+        self.challenge = Some(challenge.into());
+        self
     }
 
-    pub fn set_subdomain(&mut self, subdomain: String) {
-        self.subdomain = Some(subdomain);
+    pub fn set_subdomain(mut self, subdomain: impl Into<String>) -> Self {
+        self.subdomain = Some(subdomain.into());
+        self
     }
 
-    pub fn set_getlib(&mut self, getlib_data: String) {
-        self.getlib = Some(getlib_data);
+    pub fn set_getlib(mut self, getlib_data: impl Into<String>) -> Self {
+        self.getlib = Some(getlib_data.into());
+        self
     }
 
-    pub fn set_version(&mut self, version: i8) {
+    pub fn set_version(mut self, version: i8) -> Self {
         self.version = Some(version);
+        self
     }
 }
 
