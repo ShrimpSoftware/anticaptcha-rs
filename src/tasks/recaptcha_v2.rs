@@ -28,22 +28,24 @@ pub struct RecaptchaV2Task {
 }
 
 impl RecaptchaV2Task {
-    pub fn new(url: String, site_key: String) -> Self {
+    pub fn new(url: impl Into<String>, site_key: impl Into<String>) -> Self {
         RecaptchaV2Task {
             id: None,
             task_type: String::from("RecaptchaV2TaskProxyless"),
-            website_url: url,
-            website_key: site_key,
+            website_url: url.into(),
+            website_key: site_key.into(),
             ..Default::default()
         }
     }
 
-    pub fn set_sdata(&mut self, sdata: String) {
-        self.data_s_value = Some(sdata)
+    pub fn set_sdata(mut self, sdata: impl Into<String>) -> Self {
+        self.data_s_value = Some(sdata.into());
+        self
     }
 
-    pub fn set_invisible(&mut self, is_invisible: bool) {
+    pub fn set_invisible(mut self, is_invisible: bool) -> Self {
         self.is_invisible = Some(is_invisible);
+        self
     }
 }
 
