@@ -27,23 +27,28 @@ pub struct HCaptchaTask {
 }
 
 impl HCaptchaTask {
-    pub fn new(url: String, site_key: String, user_agent: String) -> Self {
+    pub fn new<I>(url: I, site_key: I, user_agent: I) -> Self
+    where
+        I: Into<String>,
+    {
         HCaptchaTask {
             id: None,
             task_type: String::from("HCaptchaTaskProxyless"),
-            website_url: url,
-            website_key: site_key,
-            user_agent: user_agent,
+            website_url: url.into(),
+            website_key: site_key.into(),
+            user_agent: user_agent.into(),
             ..Default::default()
         }
     }
 
-    pub fn set_enterprise_payload(&mut self, payload: String) {
-        self.enterprise_payload = Some(payload)
+    pub fn set_enterprise_payload(mut self, payload: impl Into<String>) -> Self {
+        self.enterprise_payload = Some(payload.into());
+        self
     }
 
-    pub fn set_invisible(&mut self, is_invisible: bool) {
+    pub fn set_invisible(mut self, is_invisible: bool) -> Self {
         self.is_invisible = Some(is_invisible);
+        self
     }
 }
 
