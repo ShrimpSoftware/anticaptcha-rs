@@ -16,7 +16,7 @@ pub struct TurnstileTask {
     pub website_url: String,
     #[serde(rename = "websiteKey")]
     pub website_key: String,
-    #[serde(skip_serializing)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub action: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none", rename = "turnstileCData")]
     pub turnstile_c_data: Option<String>,
