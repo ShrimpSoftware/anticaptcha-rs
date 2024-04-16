@@ -12,6 +12,8 @@ pub mod funcaptcha;
 pub use funcaptcha::FunCaptchaTask;
 
 pub mod geetest;
+pub mod turnstile;
+
 pub use geetest::GeeTestTask;
 
 pub trait Task {

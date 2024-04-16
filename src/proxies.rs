@@ -21,7 +21,13 @@ pub trait Proxiable {
 }
 
 impl Proxy {
-    pub fn new(ptype: ProxyType, address: String, port: u32) -> Self {
+    pub fn new(
+        ptype: ProxyType,
+        address: String,
+        port: u32,
+        username: Option<String>,
+        password: Option<String>,
+    ) -> Self {
         Proxy {
             proxy_type: match ptype {
                 ProxyType::Http => String::from("http"),
@@ -30,7 +36,8 @@ impl Proxy {
             },
             proxy_address: address,
             proxy_port: port,
-            ..Default::default()
+            proxy_login: username,
+            proxy_password: password,
         }
     }
 }

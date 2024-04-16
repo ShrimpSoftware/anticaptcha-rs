@@ -14,10 +14,7 @@ pub struct Anticaptcha {
 impl Anticaptcha {
     pub fn new(key: String) -> Self {
         let client = reqwest::Client::new();
-        Anticaptcha {
-            client: client,
-            key: key,
-        }
+        Anticaptcha { client, key }
     }
 
     pub async fn balance(&self) -> Result<BalanceResponse, Error> {
@@ -55,7 +52,7 @@ impl Anticaptcha {
 
         let mut response: TaskStatus<T::TaskResult> =
             request(&self.client, String::from("/getTaskResult"), &data).await?;
-        while !response.solution.is_some() {
+        while response.solution.is_none() {
             tokio::time::sleep(std::time::Duration::from_secs(5)).await;
             response = request(&self.client, String::from("/getTaskResult"), &data).await?;
         }

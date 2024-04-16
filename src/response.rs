@@ -52,3 +52,10 @@ pub struct GeeTestResponse {
     pub validate: String,
     pub seccode: String,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct TurnstileResponse {
+    pub token: String,
+    #[serde(rename = "userAgent")]
+    pub user_agent: String,
+}

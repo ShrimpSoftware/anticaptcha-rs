@@ -1,12 +1,12 @@
-# nocaptcha
+# anticaptcha-rs
 Anti-captcha API wrapper built in Rust.
 
 Currently under development.
 
 ## Example
 ```rust
-use nocaptcha::captcha::Anticaptcha;
-use nocaptcha::tasks::RecaptchaV2Task;
+use anticaptcha::captcha::Anticaptcha;
+use anticaptcha::tasks::RecaptchaV2Task;
 
 #[tokio::test]
 async fn test_recaptcha_v2() -> Result<(), Box<dyn std::error::Error>> {
