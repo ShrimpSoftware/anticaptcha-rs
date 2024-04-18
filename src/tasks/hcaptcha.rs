@@ -7,6 +7,8 @@ use serde::Serialize;
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
+
 pub struct HCaptchaTask {
     #[serde(skip_serializing)]
     pub id: Option<i64>,
@@ -14,13 +16,10 @@ pub struct HCaptchaTask {
     pub task_type: String,
     #[serde(rename = "websiteURL")]
     pub website_url: String,
-    #[serde(rename = "websiteKey")]
     pub website_key: String,
-    #[serde(rename = "userAgent")]
     pub user_agent: String,
-    #[serde(rename = "isInvisible")]
     pub is_invisible: Option<bool>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "enterprisePayload")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub enterprise_payload: Option<String>,
     #[serde(skip_serializing)]
     pub proxy: Option<Proxy>,

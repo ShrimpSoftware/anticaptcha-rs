@@ -7,6 +7,7 @@ use serde::Serialize;
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct FunCaptchaTask {
     #[serde(skip_serializing)]
     pub id: Option<i64>,

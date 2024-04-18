@@ -13,6 +13,7 @@ pub struct TurnstileTask {
     pub id: Option<i64>,
     #[serde(rename = "type")]
     pub task_type: String,
+    #[serde(rename = "websiteURL")]
     pub website_url: String,
     pub website_key: String,
     #[serde(skip_serializing_if = "Option::is_none")]
