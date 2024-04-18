@@ -8,6 +8,7 @@ pub enum ProxyType {
 }
 
 #[derive(Debug, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct Proxy {
     proxy_type: String,
     proxy_address: String,

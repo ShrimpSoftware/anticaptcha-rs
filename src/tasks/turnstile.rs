@@ -7,18 +7,16 @@ use serde::Serialize;
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct TurnstileTask {
     #[serde(skip_serializing)]
     pub id: Option<i64>,
     #[serde(rename = "type")]
     pub task_type: String,
-    #[serde(rename = "websiteURL")]
     pub website_url: String,
-    #[serde(rename = "websiteKey")]
     pub website_key: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub action: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none", rename = "turnstileCData")]
     pub turnstile_c_data: Option<String>,
     #[serde(skip_serializing)]
     pub proxy: Option<Proxy>,

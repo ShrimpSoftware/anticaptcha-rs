@@ -1,32 +1,28 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ErrorResponse {
-    #[serde(rename = "errorId")]
     pub error_id: i8,
-    #[serde(rename = "errorCode")]
     pub error_code: String,
-    #[serde(rename = "errorDescription")]
     pub error_description: String,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct TaskStatus<T> {
     pub status: String,
     pub solution: Option<T>,
     pub cost: Option<String>,
     pub ip: Option<String>,
-    #[serde(rename = "createTime")]
     pub create_time: Option<i64>,
-    #[serde(rename = "endTime")]
     pub end_time: Option<i64>,
-    #[serde(rename = "solveCount")]
     pub solve_count: Option<i64>,
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct TaskResponse {
-    #[serde(rename = "taskId")]
     pub task_id: i64,
 }
 
@@ -54,8 +50,8 @@ pub struct GeeTestResponse {
 }
 
 #[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct TurnstileResponse {
     pub token: String,
-    #[serde(rename = "userAgent")]
     pub user_agent: String,
 }

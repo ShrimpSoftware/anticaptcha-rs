@@ -7,16 +7,14 @@ use serde::Serialize;
 use serde_json::Value;
 
 #[derive(Debug, Serialize, Default)]
+#[serde(rename_all = "camelCase")]
 pub struct RecaptchaV2Task {
     #[serde(skip_serializing)]
     pub id: Option<i64>,
     #[serde(rename = "type")]
     pub task_type: String,
-    #[serde(rename = "websiteURL")]
     pub website_url: String,
-    #[serde(rename = "websiteKey")]
     pub website_key: String,
-    #[serde(rename = "isInvisible")]
     pub is_invisible: Option<bool>,
     #[serde(
         skip_serializing_if = "Option::is_none",
